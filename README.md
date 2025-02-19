@@ -1,5 +1,6 @@
 # turnsense
 A lightweight end-of-utterance detection model fine-tuned on SmolLM-135M, optimized for Raspberry Pi and low-power devices.
+
 🚀 Supports: ONNX (for transformers & ONNX Runtime) | GGUF (for llama.cpp)
 
 
