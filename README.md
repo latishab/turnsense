@@ -12,7 +12,8 @@ Formats:
 - GGUF (for llama.cpp, CPU inference on Raspberry Pi)
 
 ## 🔹 Installation
-Option 1: ONNX (Hugging Face Transformers)
+## Option 1: ONNX (Hugging Face Transformers)
+
 Best for integration with existing Transformers-based pipelines.
 
 ### Install dependencies
@@ -25,7 +26,7 @@ pip install transformers onnxruntime optimum
 from optimum.onnxruntime import ORTModelForCausalLM
 from transformers import AutoTokenizer
 
-model_path = "your-username/turnsense-onnx"
+model_path = "latishab/turnsense-onnx"
 model = ORTModelForCausalLM.from_pretrained(model_path)
 tokenizer = AutoTokenizer.from_pretrained(model_path)
 
