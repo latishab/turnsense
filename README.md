@@ -2,6 +2,7 @@
 A lightweight end-of-utterance detection model fine-tuned on SmolLM-135M, optimized for Raspberry Pi and low-power devices.
 
 🚀 Supports: ONNX (for transformers & ONNX Runtime)
+📦 **Model Repository**: [Hugging Face - latishab/turnsense](https://huggingface.co/latishab/turnsense)
 
 ## 🛠 Model Details
 Model: SmolLM2-135M fine-tuned for end-of-utterance detection.
