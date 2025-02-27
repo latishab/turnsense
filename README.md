@@ -19,13 +19,13 @@ The quantized model has a bias toward Non-EOU predictions, which is beneficial w
 ![Confusion Matrices](confusion_matrices.png)
 
 ## 🔹 Installation
-### ONNX (Hugging Face Transformers)
+### ONNX Runtime
 
-Best for integration with existing Transformers-based pipelines.
+ONNX (Open Neural Network Exchange) is an open standard for machine learning models that allows models to be transferred between different frameworks.
 
 #### Install dependencies
 ```
-pip install transformers onnxruntime optim
+pip install transformers onnxruntime numpy
 ```
 
 ### Run inference
@@ -38,8 +38,13 @@ from transformers import AutoTokenizer
 tokenizer = AutoTokenizer.from_pretrained("latishab/turnsense")
 session = onnxruntime.InferenceSession("model_quantized.onnx")  # or model_preprocessed.onnx
 
-# Prepare input text
-input_text = "User: Wait, wait, so if I do that, then… hold on, I think I messed up the—"
+# Prepare input text with 3 turns of conversation context
+input_text = (
+    "<|user|> Can you help me with my math homework? <|im_end|> "
+    "<|assistant|> Of course! What kind of math problem are you working on? <|im_end|> "
+    "<|user|> Wait, wait, so if I do that, then… hold on, I think I messed up the— <|im_end|>"
+)
+
 inputs = tokenizer(
     input_text,
     return_tensors="np",
