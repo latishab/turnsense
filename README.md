@@ -258,16 +258,51 @@ print(f"Inference time: {inference_time:.2f} ms")
 
 ## 🤝 Contributions
 
-Contributions to improve turnsense are welcome! Here are some ways you can help:
+### Understanding Model Context and Limitations
+
+TurnSense is trained primarily on a combination of MultiWOZ2.2 and synthetic data designed to mimic AI assistant and human interactions. End-of-utterance detection is highly nuanced and context-dependent, varying significantly across:
+
+- Different conversation domains (technical support vs casual chat)
+- Speaker styles and patterns (hesitant speakers vs confident ones)
+- Cultural and linguistic backgrounds
+- Task-oriented vs open-ended conversations
+- Emotional states of speakers
+
+Our model performs best in contexts similar to its training data, but we recognize the vast diversity of real-world conversations. The model may struggle with:
+
+- Domain-specific jargon or technical discussions
+- Conversations with frequent interruptions or overlaps
+- Speakers with unique speech patterns or non-native speakers
+- Highly emotional or stressful conversations
+- Specialized contexts like medical, legal, or educational settings
+
+### How You Can Help Improve TurnSense
+
+If you use TurnSense and encounter cases where it performs poorly, we would greatly appreciate your contributions to help improve the model:
+
+1. **Collect problematic conversations**: Identify conversations where the model makes incorrect predictions (both false positives and false negatives)
+
+2. **Submit examples in the standard format**: Please follow the guidelines in [CONTRIBUTION.md](CONTRIBUTION.md) for formatting your examples
+
+3. **Provide context information**: When possible, include metadata about:
+   - The domain/topic of conversation
+   - Speaker demographics (if relevant and available)
+   - The task being performed (if task-oriented)
+   - Any unusual patterns or challenges in the conversation
+
+4. **Suggest improvements**: If you have insights about why the model might be failing in certain contexts, we welcome your analysis
+
+By contributing diverse conversation examples, especially from underrepresented domains or conversation styles, you help make TurnSense more robust and universally applicable.
+
+### Other Ways to Contribute
 
 - Testing the model in different conversational contexts and reporting results
 - Improving documentation and examples
 - Adding support for additional model formats (GGUF, TensorRT, etc.)
 - Creating language-specific fine-tuned versions
 - Developing integration examples with popular speech recognition systems
-- Expanding the labeled dataset with more conversational examples
-  * Please ensure examples include at least 3 turns of context for optimal performance
-  * Diverse conversation styles (casual, formal, technical) are especially valuable
+
+If you'd like to contribute, please feel free to open an issue or submit a pull request.
 
 ## 🔮 Future Work
 
