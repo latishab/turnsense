@@ -1,5 +1,5 @@
 # turnsense
-A lightweight end-of-utterance detection model fine-tuned on SmolLM2-135M, optimized for Raspberry Pi and low-power devices.
+A lightweight end-of-utterance detection model fine-tuned on SmolLM-135M, optimized for Raspberry Pi and low-power devices.
 
 🚀 Supports: ONNX (for transformers & ONNX Runtime)
 
@@ -27,50 +27,218 @@ ONNX (Open Neural Network Exchange) is an open standard for machine learning mod
 
 #### Install dependencies
 ```
-pip install transformers onnxruntime numpy
+pip install transformers onnxruntime numpy huggingface_hub
 ```
 
-### Run inference
+## Usage
+
+### Method 1: ONNX Runtime Direct (Fastest, Best for Edge Devices)
+
 ```python
-import onnxruntime
+import onnxruntime as ort
 import numpy as np
 from transformers import AutoTokenizer
+import time
+from huggingface_hub import hf_hub_download
 
-# Load tokenizer and model
-tokenizer = AutoTokenizer.from_pretrained("latishab/turnsense")
-session = onnxruntime.InferenceSession("model_quantized.onnx")  # or model_preprocessed.onnx
+# Download and load tokenizer and model
+model_id = "latishab/turnsense"
+tokenizer = AutoTokenizer.from_pretrained(model_id)
 
-# Prepare input text with 3 turns of conversation context
-input_text = (
-    "<|user|> Can you help me with my math homework? <|im_end|> "
-    "<|assistant|> Of course! What kind of math problem are you working on? <|im_end|> "
-    "<|user|> Wait, wait, so if I do that, then… hold on, I think I messed up the— <|im_end|>"
+# Download the model file (only needed once)
+model_path = hf_hub_download(repo_id=model_id, filename="model_quantized.onnx")
+
+# Load the ONNX model with CPU provider
+session = ort.InferenceSession(
+    model_path,
+    providers=["CPUExecutionProvider"]
 )
 
-inputs = tokenizer(
-    input_text,
-    return_tensors="np",
-    truncation=True,
-    padding=True,
-    max_length=128
-)
+# Helper function to ensure 3-turn context
+def ensure_context(text):
+    # If this doesn't look like a formatted conversation, add minimal context
+    if not ("<|user|>" in text or "<|assistant|>" in text):
+        return (
+            "<|user|> Hello <|im_end|> "
+            "<|assistant|> Hi there! How can I help you today? <|im_end|> "
+            f"<|user|> {text} <|im_end|>"
+        )
+    return text
 
-# Run inference
-ort_inputs = {
-    'input_ids': inputs['input_ids'].astype(np.int64),
-    'attention_mask': inputs['attention_mask'].astype(np.int64)
-}
-output = session.run(None, ort_inputs)[0]
+# Helper function to format conversation
+def format_conversation(conversation):
+    formatted_text = ""
+    for turn in conversation:
+        if turn["role"] == "user":
+            formatted_text += f"<|user|> {turn['content']} <|im_end|> "
+        elif turn["role"] == "assistant":
+            formatted_text += f"<|assistant|> {turn['content']} <|im_end|> "
+    return formatted_text
 
-# Get EOU probability
-# If output has shape [batch_size, 2], take probability for class 1 (EOU)
-if len(output.shape) > 1 and output.shape[1] == 2:
-    eou_probability = float(output[0, 1])
-else:
-    # If output has shape [batch_size] (single probability)
-    eou_probability = float(output[0])
+# Simple prediction function
+def predict_eou(text_or_conversation):
+    # Handle different input types
+    if isinstance(text_or_conversation, list):
+        # It's a conversation list
+        input_text = format_conversation(text_or_conversation)
+    else:
+        # It's a single text string
+        input_text = ensure_context(text_or_conversation)
+    
+    # Tokenize
+    inputs = tokenizer(
+        input_text,
+        return_tensors="np",
+        truncation=True,
+        padding=True,
+        max_length=128
+    )
+    
+    # Run inference
+    start_time = time.time()
+    ort_inputs = {
+        'input_ids': inputs['input_ids'].astype(np.int64),
+        'attention_mask': inputs['attention_mask'].astype(np.int64)
+    }
+    probabilities = session.run(None, ort_inputs)[0]
+    inference_time = time.time() - start_time
+    
+    # Get prediction
+    predicted_class_id = np.argmax(probabilities, axis=1)[0]
+    eou_probability = probabilities[0, 1]  # Probability of EOU class
+    
+    label = "EOU" if predicted_class_id == 1 else "NON_EOU"
+    
+    return {
+        "label": label,
+        "score": float(eou_probability),
+        "inference_time": inference_time * 1000  # ms
+    }
 
-print(f"End-of-utterance probability: {eou_probability:.4f}")
+# Example with a single utterance
+utterance = "I think that's all I needed to ask about"
+result = predict_eou(utterance)
+print(f"Text: \"{utterance}\"")
+print(f"Prediction: {result['label']} (EOU probability: {result['score']:.4f})")
+print(f"Inference time: {result['inference_time']:.2f} ms")
+
+# Example with conversation context
+conversation = [
+    {"role": "user", "content": "Can you help me with my math homework?"},
+    {"role": "assistant", "content": "Of course! What kind of math problem are you working on?"},
+    {"role": "user", "content": "Wait, wait, so if I do that, then… hold on, I think I messed up the—"}
+]
+
+result = predict_eou(conversation)
+print("\nConversation:")
+for turn in conversation:
+    print(f"  {turn['role']}: {turn['content']}")
+print(f"Prediction: {result['label']} (EOU probability: {result['score']:.4f})")
+print(f"Inference time: {result['inference_time']:.2f} ms")
+```
+
+### Method 2: Simple Pipeline-like Interface
+
+```python
+import onnxruntime as ort
+import numpy as np
+from transformers import AutoTokenizer
+import time
+from huggingface_hub import hf_hub_download
+
+# Download and load tokenizer and model
+model_id = "latishab/turnsense"
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+
+# Download the model file (only needed once)
+model_path = hf_hub_download(repo_id=model_id, filename="model_quantized.onnx")
+
+# Create a simple pipeline-like class
+class EOUDetector:
+    def __init__(self, model_path, tokenizer):
+        self.session = ort.InferenceSession(
+            model_path,
+            providers=["CPUExecutionProvider"]
+        )
+        self.tokenizer = tokenizer
+        self.id2label = {0: "NON_EOU", 1: "EOU"}
+    
+    def __call__(self, text):
+        # Ensure context if needed
+        if not ("<|user|>" in text or "<|assistant|>" in text):
+            text = (
+                "<|user|> Hello <|im_end|> "
+                "<|assistant|> Hi there! How can I help you today? <|im_end|> "
+                f"<|user|> {text} <|im_end|>"
+            )
+        
+        # Tokenize
+        inputs = self.tokenizer(
+            text,
+            return_tensors="np",
+            truncation=True,
+            padding=True,
+            max_length=128
+        )
+        
+        # Run inference
+        ort_inputs = {
+            'input_ids': inputs['input_ids'].astype(np.int64),
+            'attention_mask': inputs['attention_mask'].astype(np.int64)
+        }
+        probabilities = self.session.run(None, ort_inputs)[0]
+        
+        # Get prediction
+        predicted_class_id = np.argmax(probabilities, axis=1)[0]
+        score = probabilities[0, predicted_class_id]
+        label = self.id2label[predicted_class_id]
+        eou_probability = probabilities[0, 1]  # Probability of EOU class
+        
+        return {
+            "label": label, 
+            "score": float(score),
+            "eou_probability": float(eou_probability)
+        }
+    
+    def format_conversation(self, conversation):
+        formatted_text = ""
+        for turn in conversation:
+            if turn["role"] == "user":
+                formatted_text += f"<|user|> {turn['content']} <|im_end|> "
+            elif turn["role"] == "assistant":
+                formatted_text += f"<|assistant|> {turn['content']} <|im_end|> "
+        return formatted_text
+
+# Create the detector
+eou_detector = EOUDetector(model_path, tokenizer)
+
+# Example with a single utterance
+utterance = "I think that's all I needed to ask about"
+start_time = time.time()
+result = eou_detector(utterance)
+inference_time = (time.time() - start_time) * 1000  # ms
+
+print(f"Text: \"{utterance}\"")
+print(f"Prediction: {result['label']} (EOU probability: {result['eou_probability']:.4f})")
+print(f"Inference time: {inference_time:.2f} ms")
+
+# Example with conversation context
+conversation = [
+    {"role": "user", "content": "Can you help me with my math homework?"},
+    {"role": "assistant", "content": "Of course! What kind of math problem are you working on?"},
+    {"role": "user", "content": "Wait, wait, so if I do that, then… hold on, I think I messed up the—"}
+]
+
+formatted_conversation = eou_detector.format_conversation(conversation)
+start_time = time.time()
+result = eou_detector(formatted_conversation)
+inference_time = (time.time() - start_time) * 1000  # ms
+
+print("\nConversation:")
+for turn in conversation:
+    print(f"  {turn['role']}: {turn['content']}")
+print(f"Prediction: {result['label']} (EOU probability: {result['eou_probability']:.4f})")
+print(f"Inference time: {inference_time:.2f} ms")
 ```
 
 ## 🔍 Usage Recommendations
@@ -100,8 +268,6 @@ Contributions to improve turnsense are welcome! Here are some ways you can help:
 - Expanding the labeled dataset with more conversational examples
   * Please ensure examples include at least 3 turns of context for optimal performance
   * Diverse conversation styles (casual, formal, technical) are especially valuable
-
-If you'd like to contribute, please feel free to open an issue or submit a pull request.
 
 ## 🔮 Future Work
 
