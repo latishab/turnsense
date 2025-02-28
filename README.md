@@ -282,7 +282,7 @@ If you use TurnSense and encounter cases where it performs poorly, we would grea
 
 1. **Collect problematic conversations**: Identify conversations where the model makes incorrect predictions (both false positives and false negatives)
 
-2. **Submit examples in the standard format**: Please follow the guidelines in [CONTRIBUTION.md](CONTRIBUTION.md) for formatting your examples
+2. **Submit examples in the standard format**: Please follow the guidelines in [CONTRIBUTING.md](CONTRIBUTING.md) for formatting your examples
 
 3. **Provide context information**: When possible, include metadata about:
    - The domain/topic of conversation
