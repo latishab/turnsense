@@ -2,44 +2,32 @@
 
 ![GitHub forks](https://img.shields.io/github/forks/latishab/turnsense?style=social)
 ![GitHub stars](https://img.shields.io/github/stars/latishab/turnsense?style=social)
+![License](https://img.shields.io/github/license/latishab/turnsense)
 
-A lightweight end-of-utterance (EOU) detection model fine-tuned on SmolLM2-135M, optimized for Raspberry Pi and low-power devices. The model is trained on TURNS-2K, a diverse dataset designed to capture various Speech-to-Text (STT) output patterns.
+## Overview
 
-🚀 Supports: ONNX (for transformers & ONNX Runtime)
+Turnsense is an open-source end-of-utterance (EOU) detection model, designed specifically for real-time voice AI applications. Built on SmolLM2-135M and optimized for low-power devices like Raspberry Pi, it offers high accuracy while maintaining efficient performance.
 
-📦 **Model Repository**: [Hugging Face - latishab/turnsense](https://huggingface.co/latishab/turnsense)
+End-of-utterance detection is crucial in conversational AI systems, determining when an AI should respond to human speech. While traditional systems rely on simple Voice Activity Detection (VAD), Turnsense takes a more sophisticated approach by analyzing both linguistic and semantic patterns.
 
-## 🛠 Model Details
-Model: SmolLM2-135M fine-tuned for end-of-utterance detection.
-Size: ~135M parameters (optimized for efficiency).
-Formats:
-- ONNX (for Hugging Face transformers & ONNX Runtime)
+## 🔑 Key Features
 
-## 📊 Performance & Optimization
+- **Lightweight Architecture**: Built on SmolLM2-135M (~135M parameters)
+- **High Performance**: 97.50% accuracy (standard) / 93.75% accuracy (quantized)
+- **Resource Efficient**: Optimized for edge devices and low-power hardware
+- **ONNX Support**: Compatible with ONNX Runtime and Hugging Face Transformers
 
-### Model Versions Comparison
+## 📊 Performance Metrics
 
-#### Accuracy Metrics
-- **Preprocessed Version**: 97.50% accuracy
-  - Non-EOU F1-score: 0.97
-  - EOU F1-score: 0.98
-  - Excellent balance between precision and recall
+The model demonstrates robust performance across different configurations:
 
-- **Quantized Version**: 93.75% accuracy
-  - Non-EOU F1-score: 0.93
-  - EOU F1-score: 0.95
-  - Only 3.75% accuracy trade-off for significant performance gains
-
-#### Performance Benefits
-1. **Speed Improvement**:
-   - Inference Time: 26.1% faster (35.25ms → 26.05ms)
-   - Throughput: 32% improvement (527.1 → 698.2 tokens/second)
-   
-2. **Prediction Quality**:
-   - Average probability difference: Only 0.0323
-   - Maintains robust prediction confidence
+- **Standard Model**: 97.50% accuracy
+- **Quantized Model**: 93.75% accuracy
+- **Average Probability Difference**: 0.0323 between versions
 
 ![confusion_matrices](https://github.com/user-attachments/assets/1824aae3-41a9-459e-bcaf-1afb83997689)
+
+### Speed Performance
 
 ![speed](https://github.com/user-attachments/assets/1d6e4666-01c2-4a75-a3f2-f445c21033bd)
 
@@ -80,15 +68,37 @@ ort_inputs = {
 probabilities = session.run(None, ort_inputs)[0]
 ```
 
-## 📝 Dataset
-The model is trained on TURNS-2K, a diverse dataset designed to capture various Speech-to-Text (STT) output patterns, including:
-- Backchannels, mispronunciations, self-corrections
+## 📚 Dataset: TURNS-2K
+
+The model is trained on TURNS-2K, a comprehensive dataset specifically designed for end-of-utterance detection. It captures diverse speech patterns including:
+
+- Backchannels and self-corrections
 - Code-switching and language mixing
-- Different text formatting styles (clean punctuation, lowercase without punctuation)
-- Makes the model robust across different STT systems and their output variations
+- Multiple text formatting styles
+- Speech-to-Text (STT) output variations
+
+This diverse training data ensures robustness across different:
+- Speech patterns and dialects
+- STT systems and their output formats
+- Use cases and deployment scenarios
+
+## 💭 Motivation & Current State
+
+The inspiration for Turnsense came from a notable gap in the open-source AI landscape - the scarcity of efficient, lightweight turn detection models. While building a local conversational AI agent, I found that most available solutions were either proprietary or too resource-intensive for edge devices. This led to the development of Turnsense, a practical solution designed specifically for real-world deployment on hardware like Raspberry Pi.
+
+Currently, the model is trained primarily on English speech patterns using a modest dataset of 2,000 samples through LoRA fine-tuning on SmolLM2-135M. While it handles common speech-to-text outputs effectively, there are certainly edge cases and complex conversational patterns yet to be addressed. The choice of ONNX format was deliberate, prioritizing compatibility with low-power devices, though we're exploring potential ports to platforms like Apple MLX.
+
+The project's success relies heavily on community involvement. Whether it's expanding the dataset, adding multilingual support, or improving pattern recognition for complex conversational scenarios, contributions of all kinds can help evolve Turnsense into a more robust and versatile tool.
 
 ## 📄 License
 This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.
 
 ## 🤝 Contributing
-Contributions are welcome! Please feel free to submit a Pull Request.
+
+Contributions are welcome! Areas where you can help:
+- Dataset expansion
+- Model optimization
+- Documentation improvements
+- Bug reports and fixes
+
+Please feel free to submit a Pull Request or open an Issue.
