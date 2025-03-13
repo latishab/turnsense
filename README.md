@@ -37,6 +37,13 @@ The model demonstrates robust performance across different configurations:
 
 ![speed](https://github.com/user-attachments/assets/1d6e4666-01c2-4a75-a3f2-f445c21033bd)
 
+## ⚠️ Model Limitations & Considerations
+
+While Turnsense performs well in most scenarios, there are some important considerations:
+
+- **Punctuation Dependence**: The model is primarily trained on text with proper punctuation. Short utterances without punctuation (e.g., "Hello") may be ambiguous for turn detection.
+- **STT Quality**: The model's performance is influenced by the quality of the Speech-to-Text (STT) system. Better STT with proper punctuation will improve turn detection accuracy.
+
 ## 🔹 Installation
 ```bash
 pip install transformers onnxruntime numpy huggingface_hub
