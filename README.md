@@ -88,7 +88,7 @@ The model is trained on TURNS-2K, a diverse dataset designed to capture various 
 - Makes the model robust across different STT systems and their output variations
 
 ## 📄 License
-Apache 2.0
+This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.
 
 ## 🤝 Contributing
 Contributions are welcome! Please feel free to submit a Pull Request.
