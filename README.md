@@ -10,6 +10,12 @@ Turnsense is an open-source end-of-utterance (EOU) detection model, designed spe
 
 End-of-utterance detection is crucial in conversational AI systems, determining when an AI should respond to human speech. While traditional systems rely on simple Voice Activity Detection (VAD), Turnsense takes a more sophisticated approach by analyzing both linguistic and semantic patterns.
 
+🚀 Supports: ONNX (for transformers & ONNX Runtime)
+
+📦 **Model Repository**: 
+- GitHub: https://github.com/latishab/turnsense
+- Hugging Face: https://huggingface.co/latishab/turnsense
+
 ## 🔑 Key Features
 
 - **Lightweight Architecture**: Built on SmolLM2-135M (~135M parameters)
