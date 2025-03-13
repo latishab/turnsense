@@ -2,7 +2,6 @@
 
 ![GitHub forks](https://img.shields.io/github/forks/latishab/turnsense?style=social)
 ![GitHub stars](https://img.shields.io/github/stars/latishab/turnsense?style=social)
-![License](https://img.shields.io/github/license/latishab/turnsense)
 
 A lightweight end-of-utterance (EOU) detection model fine-tuned on SmolLM2-135M, optimized for Raspberry Pi and low-power devices. The model is trained on TURNS-2K, a diverse dataset designed to capture various Speech-to-Text (STT) output patterns.
 
