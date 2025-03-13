@@ -114,7 +114,7 @@ If you use this model in your research, please cite it using:
 
 ```bibtex
 @software{latishab2025turnsense,
-  author       = {Latisha B},
+  author       = {Latisha Besariani HENDRA},
   title        = {Turnsense: A Lightweight End-of-Utterance Detection Model},
   month        = mar,
   year         = 2025,
