@@ -108,3 +108,19 @@ Contributions are welcome! Areas where you can help:
 - Bug reports and fixes
 
 Please feel free to submit a Pull Request or open an Issue.
+
+## 📚 Citation
+If you use this model in your research, please cite it using:
+
+```bibtex
+@software{latishab2025turnsense,
+  author       = {Latisha B},
+  title        = {Turnsense: A Lightweight End-of-Utterance Detection Model},
+  month        = mar,
+  year         = 2025,
+  publisher    = {GitHub},
+  journal      = {GitHub repository},
+  url          = {https://github.com/latishab/turnsense},
+  note         = {https://huggingface.co/latishab/turnsense}
+}
+```
