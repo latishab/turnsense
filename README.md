@@ -4,7 +4,7 @@
 ![GitHub stars](https://img.shields.io/github/stars/latishab/turnsense?style=social)
 ![License](https://img.shields.io/github/license/latishab/turnsense)
 
-A lightweight end-of-utterance (EOU) detection model fine-tuned on SmolLM2-135M, optimized for Raspberry Pi and low-power devices. The model is trained on TURNS-2K, a diverse dataset designed to capture various Speech-to-Text (STT) output patterns, including backchannels, mispronunciations, code-switching, and different text formatting styles. This makes the model robust across different STT systems and their output variations.
+A lightweight end-of-utterance (EOU) detection model fine-tuned on SmolLM2-135M, optimized for Raspberry Pi and low-power devices. The model is trained on TURNS-2K, a diverse dataset designed to capture various Speech-to-Text (STT) output patterns.
 
 🚀 Supports: ONNX (for transformers & ONNX Runtime)
 
@@ -16,8 +16,29 @@ Size: ~135M parameters (optimized for efficiency).
 Formats:
 - ONNX (for Hugging Face transformers & ONNX Runtime)
 
-## 📊 Performance
-The model achieves 97.50% accuracy with the preprocessed version and 93.75% with the quantized version, with an average probability difference of only 0.0323 between them. Both versions maintain high F1-scores (0.97-0.98 for preprocessed, 0.93-0.95 for quantized) across EOU and non-EOU classes.
+## 📊 Performance & Optimization
+
+### Model Versions Comparison
+
+#### Accuracy Metrics
+- **Preprocessed Version**: 97.50% accuracy
+  - Non-EOU F1-score: 0.97
+  - EOU F1-score: 0.98
+  - Excellent balance between precision and recall
+
+- **Quantized Version**: 93.75% accuracy
+  - Non-EOU F1-score: 0.93
+  - EOU F1-score: 0.95
+  - Only 3.75% accuracy trade-off for significant performance gains
+
+#### Performance Benefits
+1. **Speed Improvement**:
+   - Inference Time: 26.1% faster (35.25ms → 26.05ms)
+   - Throughput: 32% improvement (527.1 → 698.2 tokens/second)
+   
+2. **Prediction Quality**:
+   - Average probability difference: Only 0.0323
+   - Maintains robust prediction confidence
 
 ![confusion_matrices](https://github.com/user-attachments/assets/1824aae3-41a9-459e-bcaf-1afb83997689)
 
