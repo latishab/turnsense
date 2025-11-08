@@ -65,12 +65,13 @@ model_path = hf_hub_download(repo_id=model_id, filename="model_quantized.onnx")
 session = ort.InferenceSession(model_path, providers=["CPUExecutionProvider"])
 
 # Prepare input
+# Note: The special token <|user|> is included, but <|im_end|> is not.
 text = "Hello, how are you?"
 inputs = tokenizer(
-    f"<|user|> {text} <|im_end|>",
+    f"<|user|> {text}",
     padding="max_length",
     max_length=256,
-    return_tensors="pt"
+    return_tensors="np"  
 )
 
 # Run inference
@@ -78,7 +79,12 @@ ort_inputs = {
     'input_ids': inputs['input_ids'].numpy(),
     'attention_mask': inputs['attention_mask'].numpy()
 }
-probabilities = session.run(None, ort_inputs)[0]
+all_logits = session.run(None, ort_inputs)[0]
+logits_for_item = all_logits[0]
+prediction = np.argmax(logits_for_item)
+
+print(f"Text: '{text}'")
+print(f"Prediction (0 or 1): {prediction}")
 ```
 
 ## 📚 Dataset: TURNS-2K
