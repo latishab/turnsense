@@ -6,50 +6,46 @@
 
 ## Overview
 
-Turnsense is an open-source end-of-utterance (EOU) detection model, designed specifically for real-time voice AI applications. Built on SmolLM2-135M and optimized for low-power devices like Raspberry Pi, it offers high accuracy while maintaining efficient performance.
+Turnsense is an open-source end-of-utterance (EOU) detection model for real-time voice AI applications. Built on SmolLM2-135M and optimized for low-power devices like Raspberry Pi.
 
-End-of-utterance detection is crucial in conversational AI systems, determining when an AI should respond to human speech. While traditional systems rely on simple Voice Activity Detection (VAD), Turnsense takes a more sophisticated approach by analyzing both linguistic and semantic patterns.
+End-of-utterance detection determines when an AI should respond to human speech. Traditional systems rely on simple Voice Activity Detection (VAD). Turnsense instead analyzes linguistic and semantic patterns from the text output of an STT system.
 
-🚀 Supports: ONNX (for transformers & ONNX Runtime)
+Supports: ONNX (for transformers & ONNX Runtime)
 
-📦 **Model Repository**: 
+**Model Repository**: 
 - GitHub: https://github.com/latishab/turnsense
 - Hugging Face: https://huggingface.co/latishab/turnsense
 
-## 🔑 Key Features
+## Key Features
 
-- **Lightweight Architecture**: Built on SmolLM2-135M (~135M parameters)
-- **High Performance**: 97.50% accuracy (standard) / 93.75% accuracy (quantized)
-- **Resource Efficient**: Optimized for edge devices and low-power hardware
-- **ONNX Support**: Compatible with ONNX Runtime and Hugging Face Transformers
+- **Lightweight**: Built on SmolLM2-135M (~135M parameters)
+- **High accuracy**: 97.50% (standard) / 93.75% (quantized)
+- **Edge-ready**: Runs on Raspberry Pi and similar hardware
+- **ONNX support**: Works with ONNX Runtime and Hugging Face Transformers
 
-## 📊 Performance Metrics
+## Performance
 
-The model demonstrates robust performance across different configurations:
-
-- **Standard Model**: 97.50% accuracy
-- **Quantized Model**: 93.75% accuracy
-- **Average Probability Difference**: 0.0323 between versions
+- **Standard model**: 97.50% accuracy
+- **Quantized model**: 93.75% accuracy
+- **Average probability difference**: 0.0323 between versions
 
 ![confusion_matrices](https://github.com/user-attachments/assets/1824aae3-41a9-459e-bcaf-1afb83997689)
 
-### Speed Performance
+### Speed
 
 ![speed](https://github.com/user-attachments/assets/1d6e4666-01c2-4a75-a3f2-f445c21033bd)
 
-## ⚠️ Model Limitations & Considerations
+## Limitations
 
-While Turnsense performs well in most scenarios, there are some important considerations:
+- **Punctuation dependence**: Trained on text with proper punctuation. Short utterances without punctuation (e.g., "Hello") may be ambiguous.
+- **STT quality**: Performance depends on the quality of the upstream STT system. Better STT with proper punctuation leads to better turn detection.
 
-- **Punctuation Dependence**: The model is primarily trained on text with proper punctuation. Short utterances without punctuation (e.g., "Hello") may be ambiguous for turn detection.
-- **STT Quality**: The model's performance is influenced by the quality of the Speech-to-Text (STT) system. Better STT with proper punctuation will improve turn detection accuracy.
-
-## 🔹 Installation
+## Installation
 ```bash
 pip install transformers onnxruntime numpy huggingface_hub
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ```python
 import onnxruntime as ort
@@ -87,43 +83,30 @@ print(f"Text: '{text}'")
 print(f"Prediction (0 or 1): {prediction}")
 ```
 
-## 📚 Dataset: TURNS-2K
+## Dataset: TURNS-2K
 
-The model is trained on TURNS-2K, a comprehensive dataset specifically designed for end-of-utterance detection. It captures diverse speech patterns including:
+Trained on TURNS-2K, a dataset built for end-of-utterance detection. It covers:
 
 - Backchannels and self-corrections
 - Code-switching and language mixing
 - Multiple text formatting styles
-- Speech-to-Text (STT) output variations
+- Variations in STT output across different systems
 
-This diverse training data ensures robustness across different:
-- Speech patterns and dialects
-- STT systems and their output formats
-- Use cases and deployment scenarios
+## Motivation and current state
 
-## 💭 Motivation & Current State
+I built Turnsense because I couldn't find a good open-source turn detection model for edge devices. Most options were either proprietary or too heavy to run on something like a Raspberry Pi.
 
-The inspiration for Turnsense came from a notable gap in the open-source AI landscape - the scarcity of efficient, lightweight turn detection models. While building a local conversational AI agent, I found that most available solutions were either proprietary or too resource-intensive for edge devices. This led to the development of Turnsense, a practical solution designed specifically for real-world deployment on hardware like Raspberry Pi.
+The model is trained on English speech patterns using 2,000 samples via LoRA fine-tuning on SmolLM2-135M. It handles common STT outputs well, but there are edge cases and complex conversational patterns it doesn't cover yet. ONNX was a deliberate choice for device compatibility, though a port to Apple MLX is on the table.
 
-Currently, the model is trained primarily on English speech patterns using a modest dataset of 2,000 samples through LoRA fine-tuning on SmolLM2-135M. While it handles common speech-to-text outputs effectively, there are certainly edge cases and complex conversational patterns yet to be addressed. The choice of ONNX format was deliberate, prioritizing compatibility with low-power devices, though we're exploring potential ports to platforms like Apple MLX.
+## License
+Apache 2.0. See the [LICENSE](LICENSE) file for details.
 
-The project's success relies heavily on community involvement. Whether it's expanding the dataset, adding multilingual support, or improving pattern recognition for complex conversational scenarios, contributions of all kinds can help evolve Turnsense into a more robust and versatile tool.
+## Contributing
 
-## 📄 License
-This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.
+Contributions are welcome. Some areas that could use help: dataset expansion, model optimization, documentation, and bug reports. Feel free to open a PR or issue.
 
-## 🤝 Contributing
-
-Contributions are welcome! Areas where you can help:
-- Dataset expansion
-- Model optimization
-- Documentation improvements
-- Bug reports and fixes
-
-Please feel free to submit a Pull Request or open an Issue.
-
-## 📚 Citation
-If you use this model in your research, please cite it using:
+## Citation
+If you use this model in your research:
 
 ```bibtex
 @software{latishab2025turnsense,
