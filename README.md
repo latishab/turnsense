@@ -83,7 +83,7 @@ print(f"Text: '{text}'")
 print(f"Prediction (0 or 1): {prediction}")
 ```
 
-## Dataset: TURNS-2K
+## Dataset: [TURNS-2K](https://huggingface.co/datasets/latishab/turns-2k)
 
 Trained on TURNS-2K, a dataset built for end-of-utterance detection. It covers:
 
